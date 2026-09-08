@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설교위키 대시보드</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --card:#ffffff; --border:#e7e3da; --text:#2b2a27; --muted:#8a8577;
+    --accent:#8a5a3b; --accent-soft:#f1e4d6; --good:#4f7a5c; --warn:#b8863f; --bad:#b5533f;
+    --bar-track:#ece8e0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1b1a17; --card:#252420; --border:#38352e; --text:#eae6dd; --muted:#9b9585;
+      --accent:#d9a875; --accent-soft:#3a2f22; --good:#7fb490; --warn:#d9b06a; --bad:#d98a75;
+      --bar-track:#332f28;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    padding:32px 20px 60px;
+  }
+  .wrap{max-width:920px; margin:0 auto;}
+  header{display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:28px;}
+  h1{font-size:1.5rem; margin:0;}
+  .updated{color:var(--muted); font-size:.85rem;}
+  h2{font-size:1.05rem; margin:0 0 14px; display:flex; align-items:center; gap:8px;}
+  section{margin-bottom:36px;}
+  .stat-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px;}
+  .stat-card{
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:18px 16px; text-align:center;
+  }
+  .stat-card .num{font-size:1.9rem; font-weight:700; color:var(--accent);}
+  .stat-card .label{font-size:.8rem; color:var(--muted); margin-top:4px;}
+  .card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px;}
+  .bar-row{display:flex; align-items:center; gap:10px; margin-bottom:10px; font-size:.85rem;}
+  .bar-row .name{width:110px; flex-shrink:0; color:var(--muted);}
+  .bar-track{flex:1; background:var(--bar-track); border-radius:999px; height:10px; overflow:hidden;}
+  .bar-fill{height:100%; background:var(--accent); border-radius:999px; transition:width .3s;}
+  .bar-row .count{width:28px; text-align:right; flex-shrink:0; font-variant-numeric:tabular-nums;}
+  .review-split{display:flex; height:14px; border-radius:999px; overflow:hidden; border:1px solid var(--border);}
+  .review-split .done{background:var(--good);}
+  .review-split .todo{background:var(--bar-track);}
+  .review-legend{display:flex; gap:18px; margin-top:10px; font-size:.82rem; color:var(--muted);}
+  .review-legend span::before{content:"●"; margin-right:5px;}
+  .legend-done::before{color:var(--good);}
+  .legend-todo::before{color:var(--bar-track);}
+  table{width:100%; border-collapse:collapse; font-size:.88rem;}
+  th,td{text-align:left; padding:8px 6px; border-bottom:1px solid var(--border);}
+  th{color:var(--muted); font-weight:500; font-size:.78rem;}
+  .empty{color:var(--muted); font-size:.88rem; padding:14px 4px;}
+  .moc-groups{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;}
+  .moc-group h3{font-size:.85rem; color:var(--muted); margin:0 0 8px; font-weight:500;}
+  .moc-group ul{margin:0; padding-left:18px; font-size:.9rem;}
+  .moc-group .empty{padding:0;}
+  .log-list{list-style:none; margin:0; padding:0; font-size:.88rem;}
+  .log-list li{padding:8px 0; border-bottom:1px solid var(--border);}
+  .log-list li:last-child{border-bottom:none;}
+  .pill{
+    display:inline-block; font-size:.72rem; padding:1px 8px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent); margin-right:6px;
+  }
+  footer{color:var(--muted); font-size:.78rem; text-align:center; margin-top:40px;}
+  code{background:var(--accent-soft); padding:1px 5px; border-radius:5px; font-size:.85em;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📖 설교위키 대시보드</h1>
+    <div class="updated" id="updated"></div>
+  </header>
+
+  <section>
+    <h2>현황</h2>
+    <div class="stat-grid" id="statGrid"></div>
+  </section>
+
+  <section>
+    <h2>설교위키 분류별</h2>
+    <div class="card" id="wikiBars"></div>
+  </section>
+
+  <section>
+    <h2>검토 상태</h2>
+    <div class="card">
+      <div class="review-split" id="reviewSplit"></div>
+      <div class="review-legend">
+        <span class="legend-done">검토완료 <b id="reviewDoneNum"></b></span>
+        <span class="legend-todo">미검토 <b id="reviewTodoNum"></b></span>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>설교 흐름 (최근순)</h2>
+    <div class="card" id="timelineCard"></div>
+  </section>
+
+  <section>
+    <h2>MOC 목록</h2>
+    <div class="card">
+      <div class="moc-groups" id="mocGroups"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>수집함 대기</h2>
+    <div class="card" id="inboxCard"></div>
+  </section>
+
+  <section>
+    <h2>최근 활동</h2>
+    <div class="card">
+      <ul class="log-list" id="logList"></ul>
+    </div>
+  </section>
+
+  <footer>
+    이 데이터는 마지막 <code>/상태</code> 실행 시점의 스냅샷입니다. 최신 상태를 보려면
+    Claude Code에서 <code>/상태</code>를 실행해 이 파일을 다시 갱신해 달라고 하세요.
+  </footer>
+</div>
+
+<script>
+/* ── 여기 DATA만 갱신하면 대시보드 전체가 다시 그려집니다 (/상태 실행 시 Claude가 이 블록을 고칩니다) ── */
+const DATA = {
+  updated: "2026-09-08",
+  stats: {
+    "원본자료": 0,
+    "설교위키": 0,
+    "MOC": 0,
+    "완성설교": 0,
+    "수집함 대기": 0
+  },
+  wiki: {
+    "성경본문": 0, "설교주제": 0, "성경인물": 0, "신학": 0,
+    "예화": 0, "인용문": 0, "묵상과통찰": 0, "설교아이디어": 0
+  },
+  review: { done: 0, todo: 0 },
+  timeline: [
+    // { date:"2026-09-13", title:"...", text:"창세기 1:1-2", season:"신년", series:"..." }
+  ],
+  moc: {
+    "성경본문": [],
+    "설교주제": [],
+    "성경인물": [],
+    "신학": []
+  },
+  inbox: {
+    "기사와자료": 0, "떠오른생각": 0, "블로그": 0, "유튜브": 0, "책": 0, "기존자료": 0, "주석": 0
+  },
+  recentLog: [
+    // "2026-09-08 · /수집 · 두려움과 통제"
+  ]
+};
+/* ───────────────────────────────────────────────────────────────────────── */
+
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
+}
+
+document.getElementById("updated").textContent = "갱신일 " + DATA.updated;
+
+// 현황 카드
+const statGrid = document.getElementById("statGrid");
+Object.entries(DATA.stats).forEach(([label, num]) => {
+  const card = el("div", "stat-card");
+  card.appendChild(el("div", "num", String(num)));
+  card.appendChild(el("div", "label", label));
+  statGrid.appendChild(card);
+});
+
+// 설교위키 분류별 막대
+const wikiBars = document.getElementById("wikiBars");
+const wikiMax = Math.max(1, ...Object.values(DATA.wiki));
+if (Object.values(DATA.wiki).every(v => v === 0)) {
+  wikiBars.appendChild(el("div", "empty", "아직 만들어진 설교위키 노트가 없습니다."));
+} else {
+  Object.entries(DATA.wiki).forEach(([name, count]) => {
+    const row = el("div", "bar-row");
+    row.appendChild(el("div", "name", name));
+    const track = el("div", "bar-track");
+    track.appendChild(el("div", "bar-fill", "")).style.width = (count / wikiMax * 100) + "%";
+    row.appendChild(track);
+    row.appendChild(el("div", "count", String(count)));
+    wikiBars.appendChild(row);
+  });
+}
+
+// 검토 상태
+const total = DATA.review.done + DATA.review.todo;
+const split = document.getElementById("reviewSplit");
+if (total === 0) {
+  split.appendChild(el("div", "todo", "")).style.width = "100%";
+} else {
+  const done = el("div", "done"); done.style.width = (DATA.review.done/total*100) + "%";
+  const todo = el("div", "todo"); todo.style.width = (DATA.review.todo/total*100) + "%";
+  split.appendChild(done); split.appendChild(todo);
+}
+document.getElementById("reviewDoneNum").textContent = DATA.review.done;
+document.getElementById("reviewTodoNum").textContent = DATA.review.todo;
+
+// 설교 흐름
+const timelineCard = document.getElementById("timelineCard");
+if (DATA.timeline.length === 0) {
+  timelineCard.appendChild(el("div", "empty", "아직 완성설교가 없습니다. /설교완성을 실행하면 여기에 쌓입니다."));
+} else {
+  const table = el("table");
+  table.innerHTML = "<thead><tr><th>날짜</th><th>제목</th><th>본문</th><th>절기</th><th>시리즈</th></tr></thead>";
+  const tbody = el("tbody");
+  DATA.timeline.forEach(row => {
+    const tr = el("tr");
+    tr.innerHTML = `<td>${row.date||""}</td><td>${row.title||""}</td><td>${row.text||""}</td><td>${row.season ? `<span class="pill">${row.season}</span>` : ""}</td><td>${row.series||""}</td>`;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  timelineCard.appendChild(table);
+}
+
+// MOC 목록
+const mocGroups = document.getElementById("mocGroups");
+Object.entries(DATA.moc).forEach(([type, items]) => {
+  const group = el("div", "moc-group");
+  group.appendChild(el("h3", "", type));
+  if (items.length === 0) {
+    group.appendChild(el("div", "empty", "없음"));
+  } else {
+    const ul = el("ul");
+    items.forEach(name => ul.appendChild(el("li", "", name)));
+    group.appendChild(ul);
+  }
+  mocGroups.appendChild(group);
+});
+
+// 수집함 대기
+const inboxCard = document.getElementById("inboxCard");
+const inboxTotal = Object.values(DATA.inbox).reduce((a,b)=>a+b, 0);
+if (inboxTotal === 0) {
+  inboxCard.appendChild(el("div", "empty", "수집함이 비어 있습니다."));
+} else {
+  Object.entries(DATA.inbox).forEach(([name, count]) => {
+    if (count === 0) return;
+    const row = el("div", "bar-row");
+    row.appendChild(el("div", "name", name));
+    row.appendChild(el("div", "count", String(count)));
+    inboxCard.appendChild(row);
+  });
+}
+
+// 최근 활동
+const logList = document.getElementById("logList");
+if (DATA.recentLog.length === 0) {
+  logList.appendChild(el("li", "empty", "아직 기록된 활동이 없습니다."));
+} else {
+  DATA.recentLog.forEach(line => logList.appendChild(el("li", "", line)));
+}
+</script>
+</body>
+</html>

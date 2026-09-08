@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>위키 운영방법</title>
+<style>
+  :root{
+    --bg:#f6f5f2; --card:#ffffff; --border:#e7e3da; --text:#2b2a27; --muted:#8a8577;
+    --accent:#8a5a3b; --accent-soft:#f1e4d6; --good:#4f7a5c; --warn:#b8863f; --bad:#b5533f;
+    --code-bg:#efeae0;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#1b1a17; --card:#252420; --border:#38352e; --text:#eae6dd; --muted:#9b9585;
+      --accent:#d9a875; --accent-soft:#3a2f22; --good:#7fb490; --warn:#d9b06a; --bad:#d98a75;
+      --code-bg:#2c2820;
+    }
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    line-height:1.55;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:32px 20px 80px;}
+  header{margin-bottom:8px;}
+  h1{font-size:1.6rem; margin:0 0 4px;}
+  .sub{color:var(--muted); font-size:.92rem; margin:0 0 20px;}
+  nav.toc{
+    display:flex; flex-wrap:wrap; gap:6px; margin-bottom:32px;
+    position:sticky; top:0; background:var(--bg); padding:10px 0; z-index:5;
+    border-bottom:1px solid var(--border);
+  }
+  nav.toc a{
+    font-size:.78rem; color:var(--accent); text-decoration:none;
+    background:var(--accent-soft); padding:4px 10px; border-radius:999px;
+  }
+  section{margin-bottom:44px; scroll-margin-top:56px;}
+  h2{font-size:1.15rem; margin:0 0 6px; display:flex; align-items:center; gap:8px;}
+  .section-desc{color:var(--muted); font-size:.86rem; margin:0 0 16px;}
+  .flow{
+    display:flex; flex-wrap:wrap; align-items:center; gap:8px;
+    background:var(--card); border:1px solid var(--border); border-radius:14px;
+    padding:18px; font-size:.88rem; font-weight:600;
+  }
+  .flow .step{background:var(--accent-soft); color:var(--accent); padding:6px 14px; border-radius:999px;}
+  .flow .arrow{color:var(--muted); font-weight:400;}
+  .phase{margin-bottom:22px;}
+  .phase-label{
+    font-size:.78rem; font-weight:700; color:var(--accent); text-transform:uppercase;
+    letter-spacing:.04em; margin-bottom:8px;
+  }
+  .cmd-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px;}
+  .cmd-card{
+    background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px 18px;
+  }
+  .cmd-card .name{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:1.02rem; font-weight:700; color:var(--accent);}
+  .cmd-card .desc{font-size:.87rem; margin:6px 0 10px;}
+  .cmd-card .meta{font-size:.78rem; color:var(--muted); display:flex; flex-direction:column; gap:3px;}
+  .pill{display:inline-block; font-size:.7rem; padding:1px 8px; border-radius:999px; margin-right:4px;}
+  .pill.readonly{background:var(--accent-soft); color:var(--accent);}
+  .pill.nowiki{background:#e9dede; color:var(--bad);}
+  @media (prefers-color-scheme: dark){ .pill.nowiki{background:#3a2626;} }
+  .card{background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px 20px;}
+  ul.plain{margin:0; padding-left:20px; font-size:.9rem;}
+  ul.plain li{margin-bottom:6px;}
+  .principle-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px;}
+  .principle{background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 16px; font-size:.87rem;}
+  .principle .icon{font-size:1.1rem; margin-bottom:4px;}
+  table{width:100%; border-collapse:collapse; font-size:.86rem;}
+  th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--border);}
+  th{color:var(--muted); font-weight:600; font-size:.76rem;}
+  code{background:var(--code-bg); padding:1px 6px; border-radius:5px; font-size:.85em;}
+  .tree{font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:.82rem; white-space:pre; overflow-x:auto; background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px 18px;}
+  .tree .fold{color:var(--accent); font-weight:600;}
+  .tree .note{color:var(--muted);}
+  .callout{
+    background:var(--card); border:1px solid var(--border); border-left:4px solid var(--accent);
+    border-radius:8px; padding:10px 14px; font-size:.85rem; margin:8px 0;
+  }
+  .callout.warn{border-left-color:var(--bad);}
+  .agent-table td:first-child{font-weight:600;}
+  footer{color:var(--muted); font-size:.78rem; text-align:center; margin-top:50px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>📖 목회자 LLM-Wiki 운영방법</h1>
+    <p class="sub">명령어와 운영 원칙을 한 페이지에서 확인하는 가이드입니다. 실시간 현황은 <code>90. 설정/대시보드.html</code>을 보세요.</p>
+  </header>
+
+  <nav class="toc">
+    <a href="#commands">명령어</a>
+    <a href="#flow">핵심 흐름</a>
+    <a href="#principles">절대 원칙</a>
+    <a href="#review">검토·상태</a>
+    <a href="#agents">여러 에이전트</a>
+    <a href="#folders">폴더 구조</a>
+    <a href="#docs">참고 문서</a>
+  </nav>
+
+  <section id="commands">
+    <h2>⚡ 명령어</h2>
+    <p class="section-desc">11개 명령이 있습니다. 어떤 도구를 쓰든(Claude Code / Codex / Antigravity) 같은 이름, 같은 규칙으로 동작합니다.</p>
+
+    <div class="phase">
+      <div class="phase-label">1 · 수집 &amp; 등록</div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="name">/수집</div>
+          <div class="desc">수집함의 새 자료를 원본으로 보존하고 Wiki로 추출, MOC에 연결한다.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="name">/등록</div>
+          <div class="desc">과거에 완성한 자료(설교·강의·성경공부·교육자료 등)를 원본으로 등록하고 Wiki/MOC를 갱신한다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-label">2 · 질문·탐색</div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="name">/질문</div>
+          <div class="desc">특정 설교와 무관하게 설교위키에 자유 질문을 던져 답을 찾는다. Wiki·MOC를 새로 만들지 않는다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-label">3 · 설교 준비</div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="name">/설교연결</div>
+          <div class="desc">1차설교를 분석해 Wiki·MOC·주석에서 찾은 관련 자료를 별도 연결자료로 제안한다. 초안은 건드리지 않는다.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="name">/설교완성</div>
+          <div class="desc">목회자가 확정한 설교를 완성설교로 보존하고, 새로 생긴 지식을 Wiki/MOC에 반영한다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-label">4 · 활용</div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="name">/활용</div>
+          <div class="desc">완성설교 한 편을 소그룹나눔·주보에세이·카드뉴스·숏츠·SNS 등 파생 콘텐츠로 만든다.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="name">/활용설정</div>
+          <div class="desc"><code>/활용</code>의 출력 레시피(분량·문체·구성)를 교회 상황에 맞게 조정한다.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="name">/주석 <span class="pill nowiki">Wiki 추출 안 함</span></div>
+          <div class="desc">성경 본문 AI 리서치(원어·역사·구조·해석쟁점)를 설교준비 참고자료로 만든다.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="name">/주석설정</div>
+          <div class="desc"><code>/주석</code>의 리서치 깊이·범위·우선 참고자료 레시피를 조정한다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-label">5 · 점검 (읽기 전용)</div>
+      <div class="cmd-grid">
+        <div class="cmd-card">
+          <div class="name">/상태 <span class="pill readonly">읽기 전용</span></div>
+          <div class="desc">폴더별 개수, 수집함 대기, 최근 활동을 스냅샷으로 보여준다. 파일을 고치지 않는다.</div>
+        </div>
+        <div class="cmd-card">
+          <div class="name">/점검 <span class="pill readonly">기본 읽기 전용</span></div>
+          <div class="desc">월간 점검표 항목(중복·고아 노트·미검토 적체 등)을 자동으로 훑어 우선순위와 함께 보고한다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout">
+      명령만 입력해도 되지만, 대상과 원하는 결과를 함께 말하면 더 정확합니다. 예: <code>/수집 00. 수집함/책에 오늘 넣은 파일만 처리해 줘</code>
+    </div>
+  </section>
+
+  <section id="flow">
+    <h2>🔄 핵심 흐름</h2>
+    <p class="section-desc">위 명령어들은 하나의 파이프라인으로 이어집니다.</p>
+    <div class="flow">
+      <span class="step">수집</span><span class="arrow">→</span>
+      <span class="step">원본 보존</span><span class="arrow">→</span>
+      <span class="step">Wiki 재사용</span><span class="arrow">→</span>
+      <span class="step">MOC 연결</span><span class="arrow">→</span>
+      <span class="step">설교</span><span class="arrow">→</span>
+      <span class="step">활용</span>
+    </div>
+  </section>
+
+  <section id="principles">
+    <h2>🔒 절대 원칙</h2>
+    <p class="section-desc">모든 명령이 예외 없이 지키는 규칙입니다.</p>
+    <div class="principle-grid">
+      <div class="principle"><div class="icon">🗄️</div><b>원본 보존</b><br>10. 원본자료의 파일은 덮어쓰거나 축약하지 않는다.</div>
+      <div class="principle"><div class="icon">🔗</div><b>출처 표시</b><br>원본에서 가져온 주장·인용·예화에는 출처와 위치 정보를 남긴다.</div>
+      <div class="principle"><div class="icon">🧩</div><b>작게 쪼개기</b><br>한 Wiki 노트는 가능한 한 한 개념만 다룬다.</div>
+      <div class="principle"><div class="icon">🗺️</div><b>MOC는 신중하게</b><br>관련 Wiki가 5개 이상 모이거나 반복되는 질문일 때만 만든다.</div>
+      <div class="principle"><div class="icon">✋</div><b>초안 보호</b><br><code>/설교연결</code> 단계에서 1차설교 파일을 직접 수정하지 않는다.</div>
+      <div class="principle"><div class="icon">🚫</div><b>역유입 금지</b><br><code>/활용</code> 결과는 설교위키에 다시 넣지 않는다.</div>
+      <div class="principle"><div class="icon">🕵️</div><b>단정하지 않기</b><br>추론은 "해석 제안"·"확인 필요"로 표시한다.</div>
+      <div class="principle"><div class="icon">🙈</div><b>개인정보 보호</b><br>개인·상담 사례는 익명화한다.</div>
+    </div>
+  </section>
+
+  <section id="review">
+    <h2>✅ 검토·상태 필드</h2>
+    <p class="section-desc">두 개의 독립된 축으로 노트의 신뢰도를 추적합니다.</p>
+    <div class="card" style="margin-bottom:12px;">
+      <table>
+        <thead><tr><th>필드</th><th>의미</th><th>값</th></tr></thead>
+        <tbody>
+          <tr><td><code>상태</code></td><td>내용의 성숙도</td><td>씨앗 → 발전중 → 확정</td></tr>
+          <tr><td><code>검토</code></td><td>목회자가 직접 확인했는가</td><td>미검토 → 검토완료 (AI는 스스로 바꾸지 않음)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout warn">
+      <code>주석</code>(AI 리서치)은 예외적으로 <code>검토</code>를 원본자료와 무관하게 별도로 쓰며, <code>검토완료</code>가 되기 전에는 설교 원고에 직접 인용하지 않습니다.
+    </div>
+  </section>
+
+  <section id="agents">
+    <h2>🤖 여러 에이전트 지원</h2>
+    <p class="section-desc">같은 규칙을 Claude Code·Codex·Antigravity 어디서나 동일하게 실행할 수 있습니다.</p>
+    <div class="card">
+      <table class="agent-table">
+        <thead><tr><th>도구</th><th>표준 지침 파일</th><th>명령 실행 방식</th></tr></thead>
+        <tbody>
+          <tr><td>Claude Code</td><td><code>CLAUDE.md</code></td><td><code>.claude/commands/*.md</code></td></tr>
+          <tr><td>Codex (GPT)</td><td><code>AGENTS.md</code></td><td><code>.agents/skills/*/SKILL.md</code></td></tr>
+          <tr><td>Antigravity</td><td><code>AGENTS.md</code></td><td><code>.agents/workflows/*.md</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="section-desc" style="margin-top:10px;">실제 실행 절차의 단일 출처(SSOT)는 항상 <code>90. 설정/명령어/*.md</code>이며, 위 세 진입점은 전부 그곳을 가리키는 얇은 포인터입니다.</p>
+  </section>
+
+  <section id="folders">
+    <h2>🗂️ 폴더 구조</h2>
+<div class="tree"><span class="fold">00. 수집함</span>       <span class="note">새 자료를 일단 넣어두는 곳</span>
+<span class="fold">10. 원본자료</span>     <span class="note">원문을 그대로 보존 (기사와자료/기존자료/블로그/유튜브/책/떠오른생각)</span>
+<span class="fold">20. 설교위키</span>     <span class="note">재사용 가능한 작은 지식 (성경본문/설교주제/성경인물/신학/예화/인용문/묵상과통찰/설교아이디어)</span>
+  <span class="fold">29. MOC</span>      <span class="note">여러 노트를 묶는 설교 연구 지도</span>
+<span class="fold">30. 설교준비</span>     <span class="note">1차설교 → 연결자료 → 완성설교, + 주석(AI 리서치)</span>
+<span class="fold">50. 질문</span>         <span class="note">설교와 무관한 자유 질문-답변 기록 (/질문)</span>
+<span class="fold">70. 설교활용</span>     <span class="note">완성설교의 파생 콘텐츠 (소그룹나눔/주보에세이/카드뉴스/숏츠/SNS)</span>
+<span class="fold">80. 참고자료</span>     <span class="note">이미지·PDF 등 첨부파일</span>
+<span class="fold">90. 설정</span>         <span class="note">명령어/템플릿/출력레시피/출력예시/사용안내</span></div>
+  </section>
+
+  <section id="docs">
+    <h2>📚 참고 문서</h2>
+    <div class="card">
+      <ul class="plain">
+        <li><code>LLM-운영지침.md</code> — 전체 공통 규칙 원문</li>
+        <li><code>CLAUDE.md</code> / <code>AGENTS.md</code> — 에이전트별 진입 문서</li>
+        <li><code>90. 설정/사용안내/02. 운영 흐름.md</code> — 전체 흐름도</li>
+        <li><code>90. 설정/사용안내/03. 안전과 출처 확인.md</code> — 출처·저작권·개인정보 체크리스트</li>
+        <li><code>90. 설정/사용안내/06. 월간 점검표.md</code> — <code>/점검</code>이 훑는 체크리스트 원본</li>
+        <li><code>90. 설정/사용안내/07. 속성 작성 규칙.md</code> — 프론트매터·날짜·성경본문 표기·절기 표준값 전체</li>
+        <li><code>20. 설교위키/29. MOC/MOC 운영 안내.md</code> — MOC를 만들 때/만들지 않을 때 기준</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    현재 볼트 통계(원본자료·설교위키·MOC 개수 등)는 <code>90. 설정/대시보드.html</code>에서 확인하세요.
+  </footer>
+</div>
+</body>
+</html>
