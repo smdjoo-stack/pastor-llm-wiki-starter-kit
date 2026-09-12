@@ -1,0 +1,327 @@
+.wiki-dashboard {
+  padding: 0 24px 48px;
+  overflow-y: auto;
+  height: 100%;
+  color: var(--text-normal);
+}
+
+.wd-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 16px 0 12px;
+  border-bottom: 1px solid var(--background-modifier-border);
+  position: sticky;
+  top: 0;
+  background: var(--background-primary);
+  z-index: 1;
+}
+.wd-summary-left, .wd-summary-right {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+}
+.wd-vault-name { font-size: 1.15em; font-weight: 600; }
+.wd-stats { color: var(--text-muted); }
+.wd-excluded, .wd-scanned { color: var(--text-faint); font-size: 0.85em; }
+.wd-refresh { cursor: pointer; }
+
+.wd-section { margin-top: 28px; }
+.wd-section-title {
+  margin: 0 0 10px;
+  font-size: 1em;
+  color: var(--text-muted);
+  text-transform: none;
+}
+.wd-empty { color: var(--text-faint); padding: 8px 0; }
+
+.wd-folder-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 48px 120px;
+  gap: 10px;
+  align-items: center;
+  padding: 3px 0;
+}
+.wd-folder-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-folder-name--link { cursor: pointer; }
+.wd-folder-name--link:hover { color: var(--interactive-accent); text-decoration: underline; }
+.wd-folder-top .wd-folder-name { font-weight: 600; }
+.wd-folder-child .wd-folder-name { color: var(--text-muted); font-size: 0.92em; }
+.wd-folder-children { padding-left: 16px; }
+.wd-folder-tail { margin-top: 8px; }
+.wd-folder-tail .wd-folder-name {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  white-space: normal;
+}
+.wd-folder-count { text-align: right; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+.wd-bar-track { background: var(--background-modifier-border); height: 6px; border-radius: 3px; }
+.wd-bar-fill { background: var(--interactive-accent); height: 6px; border-radius: 3px; }
+
+.wd-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.wd-toggle {
+  cursor: pointer;
+  font-size: 0.85em;
+  background: transparent;
+  border: 1px solid var(--background-modifier-border);
+  color: var(--text-muted);
+  padding: 2px 8px;
+  border-radius: 4px;
+  box-shadow: none;
+}
+.wd-moc-row {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 92px 92px;
+  gap: 10px;
+  align-items: baseline;
+  padding: 4px 0;
+}
+.wd-moc-kind { color: var(--text-faint); font-size: 0.85em; }
+.wd-moc-title {
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-moc-title:hover { color: var(--interactive-accent); text-decoration: underline; }
+.wd-moc-num {
+  color: var(--text-muted);
+  font-size: 0.88em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.wd-moc-num-sub { color: var(--text-faint); }
+.wd-moc-group {
+  margin-top: 12px;
+  padding-bottom: 2px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.wd-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.wd-search { width: 180px; }
+.wd-group { margin-bottom: 2px; }
+.wd-group-header {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  cursor: pointer;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+.wd-group-header:hover .wd-group-name { color: var(--interactive-accent); }
+.wd-caret { color: var(--text-faint); width: 12px; }
+.wd-group-name { font-weight: 600; }
+.wd-group-count { color: var(--text-muted); font-size: 0.88em; }
+.wd-group-body { padding: 4px 0 8px 20px; }
+.wd-note-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 80px 92px;
+  gap: 10px;
+  align-items: baseline;
+  padding: 2px 0;
+}
+.wd-note-title {
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-note-title:hover { color: var(--interactive-accent); text-decoration: underline; }
+.wd-note-meta {
+  color: var(--text-faint);
+  font-size: 0.85em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- 차트 --- */
+
+.wd-chart-note { color: var(--text-faint); font-size: 0.85em; }
+.wd-chart-footnote { margin-top: 8px; }
+
+.wd-testament {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+.wd-testament-label {
+  color: var(--text-muted);
+  font-size: 0.85em;
+  padding-top: 4px;
+}
+.wd-book-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+/* 칸 하나. 명암은 한 색(강조색)의 불투명도 단계로만 만든다 — 순차형은 한 색이다. */
+.wd-book {
+  width: 30px;
+  height: 22px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--interactive-accent);
+  border: 1px solid transparent;
+}
+.wd-book--s1 { opacity: 0.22; }
+.wd-book--s2 { opacity: 0.4; }
+.wd-book--s3 { opacity: 0.58; }
+.wd-book--s4 { opacity: 0.78; }
+.wd-book--s5 { opacity: 1; }
+
+/* 0권은 옅은 단계가 아니라 빈 칸이다. "적음"과 "없음"은 다른 상태다. */
+.wd-book--empty {
+  background: transparent;
+  border-color: var(--background-modifier-border);
+}
+.wd-book-abbr {
+  font-size: 0.7em;
+  line-height: 1;
+  color: var(--text-on-accent);
+}
+.wd-book--s1 .wd-book-abbr,
+.wd-book--s2 .wd-book-abbr { color: var(--text-normal); }
+.wd-book--empty .wd-book-abbr { color: var(--text-faint); }
+
+.wd-chart-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.wd-swatch { width: 16px; height: 12px; }
+.wd-legend-text { color: var(--text-faint); font-size: 0.8em; margin: 0 4px; }
+
+.wd-comp-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) 48px 56px;
+  gap: 10px;
+  align-items: center;
+  padding: 3px 0;
+}
+.wd-comp-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-comp-row--other .wd-comp-name { color: var(--text-muted); }
+.wd-comp-track {
+  background: var(--background-modifier-border);
+  height: 10px;
+  border-radius: 5px;
+}
+.wd-comp-fill {
+  background: var(--interactive-accent);
+  height: 10px;
+  border-radius: 5px;
+}
+.wd-comp-row--other .wd-comp-fill { background: var(--text-faint); }
+.wd-comp-count,
+.wd-comp-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  font-size: 0.88em;
+}
+.wd-comp-pct { color: var(--text-normal); }
+
+/* --- 도넛 --- */
+
+.wd-donut-wrap {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 4px 0 14px;
+}
+.wd-donut-figure {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  flex: 0 0 auto;
+}
+.wd-donut { width: 100%; height: 100%; display: block; }
+.wd-donut-track { stroke: var(--background-modifier-border); }
+
+/*
+ * 조각은 강조색 한 가지의 명암 단계다. 색이 정체성을 지지 않으므로(범례가 진다)
+ * categorical 팔레트가 필요 없고, 테마가 무엇이든 조각끼리는 늘 구분된다.
+ */
+.wd-donut-arc { stroke: var(--interactive-accent); }
+.wd-donut-arc--s1 { opacity: 1; }
+.wd-donut-arc--s2 { opacity: 0.78; }
+.wd-donut-arc--s3 { opacity: 0.58; }
+.wd-donut-arc--s4 { opacity: 0.4; }
+.wd-donut-arc--s5 { opacity: 0.26; }
+.wd-donut-arc--other { stroke: var(--text-faint); opacity: 0.55; }
+
+.wd-donut-center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.wd-donut-value {
+  font-size: 1.5em;
+  font-weight: 600;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.wd-donut-label { color: var(--text-faint); font-size: 0.8em; }
+
+.wd-donut-legend {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  flex: 1 1 240px;
+}
+.wd-donut-legend-row {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr) 52px 56px;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.9em;
+}
+.wd-donut-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--interactive-accent);
+}
+.wd-donut-swatch.wd-donut-arc--other { background: var(--text-faint); }
+.wd-donut-legend-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wd-donut-legend-count,
+.wd-donut-legend-pct {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+.wd-donut-legend-pct { color: var(--text-normal); }

@@ -1,0 +1,9 @@
+{
+  "id": "wiki-dashboard",
+  "name": "위키 대시보드",
+  "version": "0.1.0",
+  "minAppVersion": "1.7.2",
+  "description": "볼트에 뭐가 어디에 얼마나 있는지, 중요 MOC가 무엇인지 한 화면에서 본다.",
+  "author": "smdjoo",
+  "isDesktopOnly": false
+}
