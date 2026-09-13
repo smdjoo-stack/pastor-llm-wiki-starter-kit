@@ -1,4 +1,6 @@
 ---
+category: 2. 설교 준비 흐름
+summary: 밀린 MOC 일괄 연결
 description: 밀린 MOC 연결을 찾아 일괄 반영한다. MOC를 새로 만들지는 않는다.
 ---
 
